@@ -2,11 +2,11 @@ import os
 import pytest
 
 os.environ["PWNLIB_NOTERM"] = "1"
-from zeratool import winFunctionDetector
-from zeratool import protectionDetector
-from zeratool import formatDetector
-from zeratool import formatLeak
-from zeratool import formatExploiter
+from vuln_rules import winFunctionDetector
+from vuln_rules import protectionDetector
+from vuln_rules import formatDetector
+from vuln_rules import formatLeak
+from vuln_rules import formatExploiter
 
 
 from contextlib import redirect_stdout, redirect_stderr, contextmanager, ExitStack

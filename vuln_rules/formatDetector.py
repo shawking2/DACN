@@ -4,7 +4,7 @@ import claripy
 import time
 import timeout_decorator
 import tqdm
-from zeratool import printf_model
+from vuln_rules import printf_model
 import logging
 
 log = logging.getLogger(__name__)

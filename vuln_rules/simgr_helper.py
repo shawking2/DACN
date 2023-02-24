@@ -72,7 +72,6 @@ def check_end(state, simgr):
 					return simgr
 
 
-
 				if stack_rbp.symbolic:
 					num=check_symbolic_bits(state,stack_rbp)
 					print_bp_overflow_msg(state,num//byte_s)
@@ -131,16 +130,6 @@ def check_head(state, simgr):
 def overflow_rpb_detect_filter(simgr):
 	while simgr.active:
 		for state in simgr.active:
-			if state.globals.get("type", None) == "overflow_pc":
-				log.info("Found vulnerable state. Overflow variable to win")
-				user_input = state.globals["user_input"]
-				input_bytes = state.solver.eval(user_input, cast_to=bytes)
-				log.info("[+] Vulnerable path found {}".format(input_bytes))
-				state.globals["type"] = "overflow_pc"
-				state.globals["input"] = input_bytes
-				simgr.stashes["found"].append(state)
-				simgr.stashes["active"].remove(state)
-				return simgr
 			check_head(state, simgr)
 			check_end(state, simgr)
 		simgr.step()
@@ -292,12 +281,6 @@ def get_dlresolve_rop_chain(properties, state, data_addr=None):
     rop.ret2dlresolve(dlresolve)
 
     log.info("rop chain gadgets and values:\n{}".format(rop.dump()))
-
-    """
-    We need both the generated chain and gadget addresses for when
-    we contrain theprogram state to execute and constrain this chain,
-    so we pass back both the rop tools refernce along with the chain.
-    """
     return dlresolve, rop, rop.build()
 
 
@@ -789,7 +772,6 @@ def do_64bit_leak_with_stepping(elf, rop, rop_chain, new_state, dlresolve=None):
                     and dlresolve is not None
                 ):
                     """
-                    We're expecting a:
                     push qword [0x004040008] # .plt section
                     jmp qword [0x00404010] # .plt section + 0x8
                     or
@@ -1016,7 +998,7 @@ def leak_remote_libc_functions(simgr):
             log.warn(
                 "Try plugging these values into https://libc.nullbyte.cat/ and downloading the libc"
             )
-            log.warn("Then rerun Zeratool with --libc flag")
+            log.warn("Then rerun vuln_rules with --libc flag")
             state.globals["libc"] = None
         else:
             state.globals["libc"] = get_remote_libc_with_leaks(symbols)
@@ -1204,7 +1186,7 @@ def point_to_ropchain_filter(simgr):
             pwn_bytes = input_bytes[len(leak_input) :]
 
         """
-        If Zeratool fails, we atleast want the inputs that trigger the leak an 
+        If vuln_rules fails, we atleast want the inputs that trigger the leak an 
         attempted pwn for putting into our own manual exploits
         """
         log.info("[+] Vulnerable path found {}".format(input_bytes))

@@ -5,16 +5,16 @@ import argparse
 import logging
 import os
 
-from zeratool import formatDetector
-from zeratool import formatLeak
-from zeratool import inputDetector
-from zeratool import overflowDetector
-from zeratool import overflowExploiter
-from zeratool import overflowExploitSender
-from zeratool import protectionDetector
-from zeratool import winFunctionDetector
-from zeratool import formatExploiter
-from zeratool import overflowRemoteLeaker
+from vuln_rules import formatDetector
+from vuln_rules import formatLeak
+from vuln_rules import inputDetector
+from vuln_rules import overflowDetector
+from vuln_rules import overflowExploiter
+from vuln_rules import overflowExploitSender
+from vuln_rules import protectionDetector
+from vuln_rules import winFunctionDetector
+from vuln_rules import formatExploiter
+from vuln_rules import overflowRemoteLeaker
 
 logging.basicConfig()
 logging.root.setLevel(logging.INFO)
@@ -88,6 +88,12 @@ def main():
         action="store_true",
         help="Only run overflow check",
     )
+    parser.add_argument(
+        "--off_by_one_rbp",
+        default=False,
+        action="store_true",
+        help="Only run overflow check",
+    )
 
     args = parser.parse_args()
     if args.file is None:
@@ -121,7 +127,11 @@ def main():
     properties["win_functions"] = []
     if not args.no_win:
         properties["win_functions"] = winFunctionDetector.getWinFunctions(args.file)
-
+    if args.off_by_one_rbp:
+        log.info("[+] Checking for off by one pwn type...")
+        properties["pwn_type"] = overflowDetector.off_by_one_rbp(
+            args.file, inputType=properties["input_type"]
+    )
     if not args.format_only and not args.skip_check:
         log.info("[+] Checking for overflow pwn type...")
         properties["pwn_type"] = overflowDetector.checkOverflow(
@@ -238,6 +248,7 @@ def main():
             properties["pwn_type"]["send_results"] = formatExploiter.getRemoteFormat(
                 properties, remote_url=args.url, remote_port=int(args.port)
             )
+    
     else:
         log.info("[-] Can not determine vulnerable type")
 

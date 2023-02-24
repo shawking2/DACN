@@ -7,12 +7,12 @@ import shlex
 from shutil import which
 
 os.environ["PWNLIB_NOTERM"] = "1"
-from zeratool import overflowDetector
-from zeratool import overflowExploiter
-from zeratool import overflowExploitSender
-from zeratool import winFunctionDetector
-from zeratool import protectionDetector
-from zeratool import overflowRemoteLeaker
+from vuln_rules import overflowDetector
+from vuln_rules import overflowExploiter
+from vuln_rules import overflowExploitSender
+from vuln_rules import winFunctionDetector
+from vuln_rules import protectionDetector
+from vuln_rules import overflowRemoteLeaker
 
 from contextlib import redirect_stdout, redirect_stderr, contextmanager, ExitStack
 
@@ -362,7 +362,7 @@ def test_remote_libc_leak_64():
 
 
 """
-zerapwn.py /home/chris/projects/Zeratool/tests/bin/bof_dlresolve_64 \
+zerapwn.py /home/chris/projects/vuln_rules/tests/bin/bof_dlresolve_64 \
     --force_dlresolve --skip_check --overflow_only --no_win
 """
 

@@ -4,7 +4,7 @@ import timeout_decorator
 import os
 from struct import pack
 from angr import sim_options as so
-from zeratool import puts_model
+from vuln_rules import puts_model
 import logging
 
 log = logging.getLogger(__name__)
